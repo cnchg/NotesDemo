@@ -1,5 +1,7 @@
 package com.tricloudcommunications.ce.notesdemo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         notesLV = (ListView) findViewById(R.id.notesListView);
 
-        ArrayList<String> myNotesList = new ArrayList<String>();
+        final ArrayList<String> myNotesList = new ArrayList<String>();
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, myNotesList);
         notesLV.setAdapter(arrayAdapter);
 
@@ -40,10 +42,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Log.i("List Item", Integer.toString(position));
+                Intent intent = new Intent(getApplicationContext(), EditNote.class);
+                intent.putExtra("editAddNote", position);
+                startActivity(intent);
+
+                Log.i("List Item", myNotesList.get(position));
 
             }
         });
+
 
 
     }
@@ -63,7 +70,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.add_note) {
+
+            Intent intent = new Intent(getApplicationContext(), EditNote.class);
+            startActivity(intent);
+
+            Log.i("Menu Option", "Add Note");
+
             return true;
         }
 

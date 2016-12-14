@@ -42,6 +42,8 @@ public class EditNote extends AppCompatActivity {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                     Log.i("On Text Changed", s.toString());
+                    MainActivity.myNotesList.set(selectedNote, String.valueOf(s));
+                    MainActivity.arrayAdapter.notifyDataSetChanged();
 
                 }
 
@@ -50,39 +52,13 @@ public class EditNote extends AppCompatActivity {
 
                 }
             });
-
-
-
-            //MainActivity.myNotesList.set(selectedNote, "some Shit");
-            //MainActivity.arrayAdapter.notifyDataSetChanged();
-
-
 
         }else {
 
             actionTextView.setText("Add Note");
             Log.i("List Item Text", "No Text To Edit");
 
-            editNoteText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    Log.i("On Text Changed", s.toString());
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-
-            //MainActivity.myNotesList.add("some Shit");
+            //MainActivity.myNotesList.add(String.valueOf(editNoteText.getText()));
             //MainActivity.arrayAdapter.notifyDataSetChanged();
         }
 

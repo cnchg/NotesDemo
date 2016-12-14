@@ -2,6 +2,7 @@ package com.tricloudcommunications.ce.notesdemo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,12 +18,14 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView notesLV;
     static ArrayList<String> myNotesList;
     static ArrayAdapter arrayAdapter;
+    static Set<String> set;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         myNotesList = new ArrayList<String>();
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, myNotesList);
         notesLV.setAdapter(arrayAdapter);
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
+        set = sharedPreferences.getStringSet("notes", null);
+
+
 
         myNotesList.add("Get New Lecture");
 
@@ -51,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
 
     }

@@ -21,7 +21,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     ListView notesLV;
-
+    static ArrayList<String> myNotesList;
+    static ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
         notesLV = (ListView) findViewById(R.id.notesListView);
 
-        final ArrayList<String> myNotesList = new ArrayList<String>();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, myNotesList);
+        myNotesList = new ArrayList<String>();
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, myNotesList);
         notesLV.setAdapter(arrayAdapter);
 
-        myNotesList.add("Get new Lecture");
+        myNotesList.add("Get New Lecture");
 
         notesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

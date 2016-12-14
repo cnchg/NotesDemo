@@ -13,16 +13,24 @@
     tools:context="com.tricloudcommunications.ce.notesdemo.EditNote"
     tools:showIn="@layout/activity_edit_note">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/actionTextView"
+        android:textSize="18sp"
+        android:layout_below="@+id/editNoteText"
+        android:layout_centerHorizontal="true" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textLongMessage"
-        android:text="@string/editPlainText"
+        android:inputType="textPersonName"
         android:ems="10"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="297dp"
+        android:layout_marginTop="295dp"
         android:id="@+id/editNoteText"
         android:textAlignment="center"
-        android:hint="@string/editPlainText" />
+        android:visibility="visible"
+        android:textSize="24sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

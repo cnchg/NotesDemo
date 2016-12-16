@@ -1,6 +1,8 @@
 package com.tricloudcommunications.ce.notesdemo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,53 +18,14 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.HashSet;
+
 public class EditNote extends AppCompatActivity {
 
     int selectedNote = -1;
+    String noteType = "";
     EditText editNoteText;
     TextView actionTextView;
-
-
-    public void editNote(){
-
-        if (selectedNote != -1){
-
-
-            actionTextView.setText("Edit Note");
-            editNoteText.setText(MainActivity.myNotesList.get(selectedNote));
-            Log.i("List Item Text", MainActivity.myNotesList.get(selectedNote));
-
-            editNoteText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    Log.i("On Text Changed", s.toString());
-                    MainActivity.myNotesList.set(selectedNote, String.valueOf(s));
-                    MainActivity.arrayAdapter.notifyDataSetChanged();
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-
-        }else {
-
-            actionTextView.setText("Add Note");
-            Log.i("List Item Text", "No Text To Edit");
-
-            //MainActivity.myNotesList.add(String.valueOf(editNoteText.getText()));
-            //MainActivity.arrayAdapter.notifyDataSetChanged();
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +40,47 @@ public class EditNote extends AppCompatActivity {
 
         Intent i = getIntent();
         selectedNote = i.getIntExtra("editAddNote", -1);
+        noteType = i.getStringExtra("noteType");
+        actionTextView.setText(noteType);
 
-        editNoteText.setVisibility(View.VISIBLE);
+        editNoteText.setText(MainActivity.myNotesList.get(selectedNote));
+        Log.i("List Item Text", MainActivity.myNotesList.get(selectedNote));
 
-        editNote();
+        editNoteText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Log.i("On Text Changed", s.toString());
+                MainActivity.myNotesList.set(selectedNote, String.valueOf(s));
+                MainActivity.arrayAdapter.notifyDataSetChanged();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
+
+                if (MainActivity.set == null){
+
+                    MainActivity.set = new HashSet<String>();
+
+                }else {
+
+                    MainActivity.set.clear();
+                }
+
+                MainActivity.set.addAll(MainActivity.myNotesList);
+                sharedPreferences.edit().remove("notes").apply();
+                sharedPreferences.edit().putStringSet("notes", MainActivity.set).apply();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         Log.i("Selected Note Value", Integer.toString(selectedNote));
 

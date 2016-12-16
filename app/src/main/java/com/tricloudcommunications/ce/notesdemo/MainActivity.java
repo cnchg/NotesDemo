@@ -1,11 +1,13 @@
 package com.tricloudcommunications.ce.notesdemo;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<String> myNotesList;
     static ArrayAdapter arrayAdapter;
     static Set<String> set;
+    static SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +44,23 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, myNotesList);
         notesLV.setAdapter(arrayAdapter);
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
         set = sharedPreferences.getStringSet("notes", null);
 
+        myNotesList.clear();
 
+        if (set != null){
 
-        myNotesList.add("Get New Lecture");
+            myNotesList.addAll(set);
+
+        }else {
+
+            myNotesList.add("Example Note");
+            set = new HashSet<String>();
+            set.addAll(myNotesList);
+            sharedPreferences.edit().putStringSet("notes", set).apply();
+
+        }
 
         notesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -53,10 +68,51 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), EditNote.class);
                 intent.putExtra("editAddNote", position);
+                intent.putExtra("noteType", "Edit Note");
                 startActivity(intent);
 
                 Log.i("List Item", myNotesList.get(position));
 
+            }
+        });
+
+        notesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Are you sure")
+                        .setMessage("Do you want to delete this note?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                myNotesList.remove(position);
+
+                                sharedPreferences = MainActivity.this.getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
+
+                                if (set == null){
+
+                                    set = new HashSet<String>();
+
+                                }else {
+
+                                    set.clear();
+                                }
+
+                                set.addAll(myNotesList);
+
+                                sharedPreferences.edit().remove("notes").apply();
+                                sharedPreferences.edit().putStringSet("notes", set).apply();
+                                arrayAdapter.notifyDataSetChanged();
+
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+
+                return true;
             }
         });
 
@@ -80,7 +136,29 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.add_note) {
 
+            myNotesList.add("");
+
+            sharedPreferences = this.getSharedPreferences("com.tricloudcommunications.ce.notesdemo", Context.MODE_PRIVATE);
+
+            if (set == null){
+
+                set = new HashSet<String>();
+
+            }else {
+
+                set.clear();
+            }
+
+            set.addAll(myNotesList);
+            arrayAdapter.notifyDataSetChanged();
+
+            sharedPreferences.edit().remove("notes").apply();
+            sharedPreferences.edit().putStringSet("notes", set).apply();
+
+
             Intent intent = new Intent(getApplicationContext(), EditNote.class);
+            intent.putExtra("editAddNote", myNotesList.size() - 1);
+            intent.putExtra("noteType", "Add Note");
             startActivity(intent);
 
             Log.i("Menu Option", "Add Note");
